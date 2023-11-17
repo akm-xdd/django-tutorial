@@ -1,3 +1,6 @@
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render, redirect
 
@@ -13,6 +16,29 @@ from .models import Room, Topic
 #     {'id': 3, 'name': 'Frontend Developers'},
 # ]
 #
+
+def loginPage(request):
+    context = {}
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            messages.error(request, 'Username does not exist')
+            return render(request, 'base/login_register.html', context)
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, 'Invalid credentials!')
+
+    return render(request, 'base/login_register.html', context)
+
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
