@@ -7,4 +7,4 @@ class RoomForm(ModelForm):
     class Meta:
         model = Room
         fields = '__all__'
-        # exclude = ['host', 'updated', 'created']
+        exclude = ['host', 'updated', 'created', 'participants']
